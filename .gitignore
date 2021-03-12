@@ -1,1 +1,3 @@
-/runtime/logs/
+ .DS_Store
+/runtime
+runtime
