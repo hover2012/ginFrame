@@ -1,15 +1,20 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"gin/pkg/setting"
 	"gin/routers"
-	"github.com/fvbock/endless"
+	"github.com/astaxie/beego/logs"
 	"log"
-	"syscall"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 )
 
 func main() {
+	/*
 	endless.DefaultReadTimeOut = setting.ReadTimeout
 	endless.DefaultWriteTimeOut = setting.WriteTimeout
 	endless.DefaultMaxHeaderBytes = 1 << 20
@@ -24,8 +29,8 @@ func main() {
 	if err != nil {
 		log.Printf("server err : %v",err)
 	}
+*/
 
-	/*
 	router := routers.InitRouter()
 
 	s := &http.Server{
@@ -44,18 +49,18 @@ func main() {
 		}
 	}()
 
+	//监听所有信号
 	quit := make(chan os.Signal)
 	signal.Notify(quit,os.Interrupt)
+	log.Println("PID:",os.Getppid())
 	<- quit
-	log.Println("shut down server .....")
-
+	log.Println("shut down server .....",<- quit)
 	ctx,cancel := context.WithTimeout(context.Background(),5*time.Second)
 	defer cancel()
 	if err := s.Shutdown(ctx);err != nil {
 		log.Fatal("server shutdown :",err)
 	}
 	log.Println("Server exiting")
- */
 
 
 }
