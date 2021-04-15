@@ -141,7 +141,7 @@ func ParseMovies(doc *goquery.Document) (movies []DoubanMove) {
 			Quote: quote,
 		}
 		//log.Printf("i:%d movie:v%",i,movie)
-		models.AddMovie(moviemodel)
+		 models.AddMovie(moviemodel)
 		movies = append(movies, movie)
 
 	})

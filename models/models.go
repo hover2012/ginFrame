@@ -52,7 +52,7 @@ func init() {
 	}
 
 	db.SingularTable(true)
-	db.LogMode(true)
+	db.LogMode(true)//打开sql 日志
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
 }

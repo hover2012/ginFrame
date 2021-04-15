@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"log"
 	"time"
 )
 type MovieModel struct {
@@ -22,7 +21,7 @@ type MovieModel struct {
 
 func AddMovie(movie *MovieModel) bool {
 	db.Create(movie)
-	log.Printf("success")
+	//log.Printf("success")
 	return true
 }
 

@@ -1,12 +1,15 @@
 package controller
 
 import (
+	"fmt"
 	"gin/pkg/e"
 	"gin/pkg/log"
 	"gin/pkg/spider"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"reflect"
 	"strings"
+	"time"
 )
 
 var (
@@ -21,12 +24,16 @@ func GetDouban(c *gin.Context)  {
 	var movies [][]spider.DoubanMove
 
 	pages := spider.GetPages(BaseUrl)
+	start := time.Now()
 	for _,page := range pages{
 		url := strings.Join([]string{BaseUrl,page.Url},"")
-		move :=  spider.GetMovies(url)
-		//fmt.Println("type:", reflect.TypeOf(movies))
+
+	  	move :=  spider.GetMovies(url)
+		fmt.Println("type:", reflect.TypeOf(movies))
 		movies = append(movies ,move)
 	}
+	elapsed := time.Since(start)
+	fmt.Println("执行完成耗时",elapsed)
 
 	c.JSON(http.StatusOK,gin.H{
 		"code":code,
@@ -34,4 +41,16 @@ func GetDouban(c *gin.Context)  {
 		"data":movies,
 	})
 
+}
+
+func ShowIndex(c *gin.Context)  {
+	name := c.Query("name")
+	c.HTML(http.StatusOK,"index.html", gin.H{
+		"title": name,
+	})
+}
+
+func ShowSecureJson(c *gin.Context)  {
+	names := []string{"lena","austin","foo"}
+	c.SecureJSON(http.StatusOK,names)
 }
