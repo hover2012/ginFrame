@@ -35,6 +35,7 @@ func InitRouter() *gin.Engine {
 	{
 		paper.GET("/get",controller.GetPaperDate)
 		paper.GET("/getFile",controller.UpdateFile)
+		paper.GET("/UpdatePaperData",controller.UpdatePaperData)
 	}
 	space := r.Group("/space",gin.BasicAuth(gin.Accounts{
 		"wang":"bar",

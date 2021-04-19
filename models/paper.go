@@ -29,6 +29,12 @@ func GetPaper(maps interface{})(papers []Paper)  {
 	return
 }
 
+func UpdatePaper(id int , datas interface{})bool  {
+	db.Model(&Paper{}).Where("id=?",id).Update(datas)
+	return true
+}
+
+
 func (tag *Paper) BeforeCreate(scope *gorm.Scope) error  {
 	scope.SetColumn("CreateOn",time.Now().Unix())
 	return nil

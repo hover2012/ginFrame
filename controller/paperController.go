@@ -6,9 +6,11 @@ import (
 	"gin/models"
 	"gin/pkg/e"
 	"github.com/gin-gonic/gin"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -158,7 +160,76 @@ func UpdateFile(c *gin.Context)  {
 }
 
 func downLoad(data []models.Paper)  {
+	baseDir := "/Users/wanfei/Desktop/"
 	for _,v := range data{
-		log.Printf("++++++++",v)
+		dir := baseDir + v.Xueke+ "/"+ v.Xueduan
+		os.MkdirAll(dir,os.ModePerm)
+		doDownLoad(v.DocUrl,dir,v.Name,"doc")
+		//go  doDownLoad(v.PdfUrl,dir,v.Name,"pdf")
 	}
+}
+
+func doDownLoad(url string,dir string, name string,ext string)(bool) {
+	log.Printf("文件链接"+url)
+	res,err := http.Get(url)
+	if err != nil{
+		log.Printf("文件获取失败[1]", err)
+		return false
+	}
+	f,err := os.Create(dir +"/" +name+"."+ext)
+	if err != nil{
+		log.Printf("文件创建失败[2]",err)
+		return false
+	}
+
+	defer f.Close()
+ 	 _,err =	io.Copy(f,res.Body)
+	if err != nil{
+		log.Printf("文件创建失败[3]",err)
+		return false
+	}
+	return true
+}
+
+
+/**
+* @desc 修改数据
+**/
+func UpdatePaperData(c *gin.Context)  {
+	maps := make(map[string]interface{})
+	maps["doc_url"] = PaperBaseUrl
+	baseDir := "/Users/wanfei/Desktop/"
+
+	datas := models.GetPaper(maps)
+	for _,v := range datas{
+		id := strconv.Itoa(v.ID)
+		url := PaperBaseUrl + "/api/product/detail/" + id
+		fmt.Println(url)
+		result :=request("GET",url)
+		storInfos := result["data"].(map[string]interface{})
+		storInfo  := storInfos["storeInfo"].(map[string]interface{})
+		pdf_paper :=  storInfo["pdf_paper"]
+		name := storInfo["store_name"].(string)
+		word_paper := PaperBaseUrl +  storInfo["word_paper"].(string)
+		//doDownLoad(v.DocUrl,dir,v.Name,"doc")
+		dir := baseDir + v.Xueke+ "/"+ v.Xueduan
+		os.MkdirAll(dir,os.ModePerm)
+	 go 	doDownLoad(word_paper,dir,name,"doc")
+
+		updateData := make(map[string]interface{})
+		updateData["doc_url"] =word_paper
+		updateData["pdf_url"] =pdf_paper
+
+		models.UpdatePaper(v.ID,updateData)
+
+		//fmt.Println(word_paper)
+		fmt.Println("succ" + id)
+		//break;
+	}
+
+	c.JSON(http.StatusOK,gin.H{
+		"code":200,
+		"msg":e.GetMsg(200),
+		"data":"",
+	})
 }
